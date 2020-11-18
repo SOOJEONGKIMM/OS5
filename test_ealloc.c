@@ -28,7 +28,7 @@ int main()
   char *a[4];
   for(int i=0; i < 4; i++) {
     a[i] = alloc(4096);
-
+  
     //write to chunk
     for(int j=0; j < 4096; j++)
       *(a[i]+j) = 'a';

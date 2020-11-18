@@ -29,7 +29,7 @@ struct Chunk used_c[MAXPAGENUM];
 int init_alloc(){
 
 	for(int i=0;i<MAXPAGENUM;i++){//allocate 4kb page with mmap()
-		a[i].region=mmap(NULL, 8, PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANONYMOUS,0,0);
+		a[i].region=mmap(NULL, MINALLOC, PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANONYMOUS,0,0);
 	
 		a[i].free=1;
        // free_c[i].free=1;
@@ -51,7 +51,7 @@ int init_alloc(){
 int cleanup(){
     int err;
     for(int i=0;i<MAXPAGENUM;i++){
-         err=munmap(a[i].region, 8);
+         err=munmap(a[i].region, MINALLOC);
     }
     if(err!=0)
         return 1;
@@ -63,7 +63,7 @@ char *alloc(int buf_size){
     if(buf_size % 8 != 0)
         return NULL;
    
-    int bufpage = buf_size / 8 ;//128
+    int bufpage = buf_size / MINALLOC ;
     for(i=0;i<MAXPAGENUM;i++){
        
         if(a[i].free==1){
