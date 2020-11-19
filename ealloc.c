@@ -44,15 +44,15 @@ int cleanup(){
 char *alloc(int buf_size){
     int flag;
     int i, j;
-    if(buf_size % 8 != 0)
+    if(buf_size % 256 != 0)
         return NULL;
-    else if(buf_size > PAGESIZE * 4)
+    else if(buf_size > PAGESIZE)
         return NULL;
 
     int bufpage = buf_size / 256 ;
     i = 0;
     while (i<MAXPAGENUM){
-       
+  
         if(a[i].free==1){
  
             flag=1;
@@ -66,51 +66,55 @@ char *alloc(int buf_size){
              
             }
             if(flag){//allocate
-                       
-                for( j=i;j<bufpage+i; j++){
+                    j=i;
+                /*for( j=i;j<bufpage+i; j++){
                       if(j >= MAXPAGENUM)
                          break;
-                                   
-                    //   printf("debug j:%d bufpage:%d buf_size%d\n",j,bufpage,buf_size);
-                    a[j].free=0;
+                  */                 
 
                     if(j== 0 && a[j].mmaped==0){
-                        for (int k=0; k< 16; k++) {
-                            a[k].region=mmap(NULL, 256, PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANONYMOUS,0,0);
+                         
+                        for (int k=0; k< 1; k++) {
+                            a[k].region=mmap(NULL, 16, PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANONYMOUS,0,0);
                              if(a[k].region==MAP_FAILED)
                             return NULL;
                             a[k].mmaped=1;
+                             a[k].free=0;
                         }
                     }
-                    else if(j== 16 && a[j].mmaped==0){
-                        for (int k=16; k< 32; k++) {
-                            a[k].region=mmap(NULL, 256, PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANONYMOUS,0,0);
+                    else if(j== 1 && a[j].mmaped==0){
+                        for (int k=1; k< 2; k++) {
+                            // printf("free:%d mmaped:%d j:%d bufpage:%d buf_size%d\n",a[k].free,a[k].mmaped,j,bufpage,buf_size);
+                            a[k].region=mmap(NULL, 16, PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANONYMOUS,0,0);
                              if(a[k].region==MAP_FAILED)
                             return NULL;
                             a[k].mmaped=1;
+                             a[k].free=0;
                         }
                     }   
-                    else if(j== 32 && a[j].mmaped==0){
-                        for (int k=32; k< 48; k++) {
+                    else if(j== 2 && a[j].mmaped==0){
+                        for (int k=2; k< 3; k++) {
                             a[k].region=mmap(NULL, 256, PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANONYMOUS,0,0);
                              if(a[k].region==MAP_FAILED)
                             return NULL;
                             a[k].mmaped=1;
+                             a[k].free=0;
                         }
                     }  
-                    else if(j== 48 && a[j].mmaped==0){
-                        for (int k=48; k< 64; k++) {
+                    else if(j== 3 && a[j].mmaped==0){
+                        for (int k=3; k<4; k++) {
                             a[k].region=mmap(NULL, 256, PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANONYMOUS,0,0);
                              if(a[k].region==MAP_FAILED)
                             return NULL;
                             a[k].mmaped=1;
+                             a[k].free=0;
                         }
                     }         
                      
  //printf("2flag:%d mmap:%d free%d bufpage:%d j:%d  i:%d\n",flag,a[j].mmaped,a[j].free,bufpage,j,i);
                   
                    
-                }
+             // }
               
 
                 return a[i].region;//first fit
@@ -118,7 +122,7 @@ char *alloc(int buf_size){
         }
         else{
             i++;
-          //  printf("2flag:%d mmap:%d free%d bufpage:%d j:%d  i:%d\n",flag,a[i].mmaped,a[i].free,bufpage,j,i);
+           // printf("2flag:%d mmap:%d free%d bufpage:%d j:%d  i:%d\n",flag,a[i].mmaped,a[i].free,bufpage,j,i);
         }
        
     }
